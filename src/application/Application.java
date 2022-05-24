@@ -1,30 +1,40 @@
 package application;
 
-import service.PrintService;
+import entities.Product;
+import service.CalculationService;
 
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class Application {
 
     public static void main(String[] args) {
 
+        Locale.setDefault(Locale.US);
 
-        Scanner sc = new Scanner(System.in);
+        List<Product> list = new ArrayList<>();
 
-        PrintService ps = new PrintService();
+        String path = "/home/forttiori/file.txt";
 
-        System.out.print("How many values? ");
-        int n = sc.nextInt();
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            String line = br.readLine();
+            while (line != null) {
+                String[] filds = line.split(",");
+                list.add(new Product(filds[0], Double.parseDouble(filds[1])));
+                line = br.readLine();
+            }
 
-        for (int i = 0; i < n; i++) {
-            int value = sc.nextInt();
-            ps.addValue(value);
+            Product x = CalculationService.max(list);
+            System.out.println("Most expensive:");
+            System.out.println(x);
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
         }
 
-        ps.print();
-        System.out.println("First: " + ps.first());
-
-        sc.close();
 
     }
 }
